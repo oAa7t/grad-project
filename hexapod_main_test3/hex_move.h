@@ -20,12 +20,12 @@ const float angle_R2 = M_PI;            // 180 degrees
 const float angle_R3 = -5 * M_PI / 6.0; // -150 degrees
 
 // Path centers for legs
-const float path_center_L1[] = {path_radius * cos(angle_L1), 165.0, Robot_height};
-const float path_center_L2[] = {path_radius * cos(angle_L2), 165.0, Robot_height};
-const float path_center_L3[] = {path_radius * cos(angle_L3), 165.0, Robot_height};
-const float path_center_R1[] = {path_radius * cos(angle_R1), 165.0, Robot_height};
-const float path_center_R2[] = {path_radius * cos(angle_R2), 165.0, Robot_height};
-const float path_center_R3[] = {path_radius * cos(angle_R3), 165.0, Robot_height};
+const float path_center_L1[] = {path_radius * cos(angle_L1), 175.0, Robot_height};
+const float path_center_L2[] = {path_radius * cos(angle_L2), 175.0, Robot_height};
+const float path_center_L3[] = {path_radius * cos(angle_L3), 175.0, Robot_height};
+const float path_center_R1[] = {path_radius * cos(angle_R1), 175.0, Robot_height};
+const float path_center_R2[] = {path_radius * cos(angle_R2), 175.0, Robot_height};
+const float path_center_R3[] = {path_radius * cos(angle_R3), 175.0, Robot_height};
 
 unsigned long previousTimeLeft[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}; // For Left1, Left2, Left3
 unsigned long previousTimeRight[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}; // For Right1, Right2, Right3
@@ -41,12 +41,12 @@ const float L1o[] = {0.0, 0.0, 0.0};
 const float L2o[] = {0.0, 0.0, 0.0};
 const float L3o[] = {0.0, 0.0, 0.0};
 */
-const float R1o[] = {10.0, 0.0, -15.0};
-const float R2o[] = {15.0, 0.0, -15.0};
-const float R3o[] = {20.0, 5.0, -15.0};
-const float L1o[] = {-20.0, 0.0, 15.0};
-const float L2o[] = {-8.0, 0.0, 15.0};
-const float L3o[] = {-20.0, 0.0, 15.0};
+const float R1o[] = {10.0, 5.0, -6.0};
+const float R2o[] = {15.0, 15.0, -6.0};
+const float R3o[] = {15.0, 15.0, -6.0};
+const float L1o[] = {-20.0, -5.0, 8.0};
+const float L2o[] = {-8.0, -10.0, 8.0};
+const float L3o[] = {-20.0, -15.0, 8.0};
 
 // Create legs (servo indices for each leg)
 const int Left1[] = {0, 1, 2};
@@ -76,14 +76,14 @@ void initializePCA() {
 
 // Function to map angle to pulse width
 int mapAngleToPulse(int angle) {
-    return map(angle, 180, 0, SERVO_MAX, SERVO_MIN);
+    return map(angle, 0, 180, SERVO_MIN, SERVO_MAX);
 }
 
 // Function to set servo angle
 void setServoAngle(Adafruit_PWMServoDriver& pca, int channel, int angle) {
     int pulseLength = mapAngleToPulse(90 - angle);
     Serial.print("Angle: ");
-    Serial.print(90 - angle);
+    Serial.print(90 + angle);
     Serial.print(" Pulse: ");
     Serial.println(pulseLength);
     pca.setPWM(channel, 0, pulseLength);
@@ -173,8 +173,8 @@ void preGait(const int* leg, const float* O, const float* path_center, float pat
 
     if (strcmp(order, "drag") == 0) {
         // Drag Forward
-        float x_L_F = (0.0f - j2) * cos(leg_angle);
-        float y_L_F = (0.0f - j2) * sin(leg_angle);
+        float x_L_F = (20.0f - j2) * cos(leg_angle);
+        float y_L_F = (20.0f - j2) * sin(leg_angle);
         float z_L_F = 0.0f;
 
         // Turn
@@ -191,39 +191,39 @@ void preGait(const int* leg, const float* O, const float* path_center, float pat
 
         if (strcmp(side, "left") == 0) {
 
-            if (millis() - previousTimeLeft[leg[0] / 3][0] >= step_interval) {
+            //if (millis() - previousTimeLeft[leg[0] / 3][0] >= step_interval) {
                 setServoAngle(pca1, leg[0], L_angles[0] + O[0]);
-                previousTimeLeft[leg[0] / 3][0] = millis();
-            }
-            if (millis() - previousTimeLeft[leg[0] / 3][1] >= step_interval) {
+                //previousTimeLeft[leg[0] / 3][0] = millis();
+            //}
+            //if (millis() - previousTimeLeft[leg[0] / 3][1] >= step_interval) {
                 setServoAngle(pca1, leg[1], L_angles[1] + O[1]);
-                previousTimeLeft[leg[0] / 3][1] = millis();
-            }
-            if (millis() - previousTimeLeft[leg[0] / 3][2] >= step_interval) {
+                //previousTimeLeft[leg[0] / 3][1] = millis();
+            //}
+            //if (millis() - previousTimeLeft[leg[0] / 3][2] >= step_interval) {
                 setServoAngle(pca1, leg[2], L_angles[2] + O[2] - 90);
-                previousTimeLeft[leg[0] / 3][2] = millis();
-            }
+                //previousTimeLeft[leg[0] / 3][2] = millis();
+            //}
 
         } else if (strcmp(side, "right") == 0) {
 
-            if (millis() - previousTimeRight[leg[0] / 3][0] >= step_interval) {
+            //if (millis() - previousTimeRight[leg[0] / 3][0] >= step_interval) {
                 setServoAngle(pca2, leg[0], L_angles[0] + O[0]);
-                previousTimeRight[leg[0] / 3][0] = millis();
-            }
-            if (millis() - previousTimeRight[leg[0] / 3][1] >= step_interval) {
+                //previousTimeRight[leg[0] / 3][0] = millis();
+            //}
+            //if (millis() - previousTimeRight[leg[0] / 3][1] >= step_interval) {
                 setServoAngle(pca2, leg[1], -L_angles[1] + O[1]);
-                previousTimeRight[leg[0] / 3][1] = millis();
-            }
-            if (millis() - previousTimeRight[leg[0] / 3][2] >= step_interval) {
+                //previousTimeRight[leg[0] / 3][1] = millis();
+            //}
+            //if (millis() - previousTimeRight[leg[0] / 3][2] >= step_interval) {
                 setServoAngle(pca2, leg[2], -L_angles[2] + 90 + O[2]);
-                previousTimeRight[leg[0] / 3][2] = millis();
-            }
+                //previousTimeRight[leg[0] / 3][2] = millis();
+            //}
         }
 
     } else if (strcmp(order, "lift") == 0) {
         // Lift Forward
-        float x_L_lift_F = (0.0f + j2) * cos(leg_angle);
-        float y_L_lift_F = (0.0f + j2) * sin(leg_angle);
+        float x_L_lift_F = (20.0f + j2) * cos(leg_angle);
+        float y_L_lift_F = (20.0f + j2) * sin(leg_angle);
         float z_L_lift_F = -path_radius * sin(i2);
 
         // Turn
@@ -233,40 +233,40 @@ void preGait(const int* leg, const float* O, const float* path_center, float pat
         // Calculate final positions
         x_L = path_center[0] + direction_vector[1] * x_L_lift_F + direction_vector[0] * x_L_T;
         y_L = path_center[1] + direction_vector[1] * y_L_lift_F + fabs(direction_vector[0] * y_L_T);
-        z_L = path_center[2] - path_radius * sin(i2);
+        z_L = path_center[2] - 2 * path_radius * sin(i2);
 
         float L_angles[3];
         calculateAngles(x_L, y_L, z_L, L_angles);
 
         if (strcmp(side, "left") == 0) {
 
-            if (millis() - previousTimeLeft[leg[0] / 3][0] >= step_interval) {
+            //if (millis() - previousTimeLeft[leg[0] / 3][0] >= step_interval) {
                 setServoAngle(pca1, leg[0], L_angles[0] + O[0]);
-                previousTimeLeft[leg[0] / 3][0] = millis();
-            }
-            if (millis() - previousTimeLeft[leg[0] / 3][1] >= step_interval) {
+                //previousTimeLeft[leg[0] / 3][0] = millis();
+            //}
+            //if (millis() - previousTimeLeft[leg[0] / 3][1] >= step_interval) {
                 setServoAngle(pca1, leg[1], L_angles[1] + O[1]);
-                previousTimeLeft[leg[0] / 3][1] = millis();
-            }
-            if (millis() - previousTimeLeft[leg[0] / 3][2] >= step_interval) {
+                //previousTimeLeft[leg[0] / 3][1] = millis();
+            //}
+            //if (millis() - previousTimeLeft[leg[0] / 3][2] >= step_interval) {
                 setServoAngle(pca1, leg[2], L_angles[2] + O[2] - 90);
-                previousTimeLeft[leg[0] / 3][2] = millis();
-            }
+                //previousTimeLeft[leg[0] / 3][2] = millis();
+            //}
 
         } else if (strcmp(side, "right") == 0) {
 
-            if (millis() - previousTimeRight[leg[0] / 3][0] >= step_interval) {
+            //if (millis() - previousTimeRight[leg[0] / 3][0] >= step_interval) {
                 setServoAngle(pca2, leg[0], L_angles[0] + O[0]);
-                previousTimeRight[leg[0] / 3][0] = millis();
-            }
-            if (millis() - previousTimeRight[leg[0] / 3][1] >= step_interval) {
+                //previousTimeRight[leg[0] / 3][0] = millis();
+            //}
+            //if (millis() - previousTimeRight[leg[0] / 3][1] >= step_interval) {
                 setServoAngle(pca2, leg[1], -L_angles[1] + O[1]);
-                previousTimeRight[leg[0] / 3][1] = millis();
-            }
-            if (millis() - previousTimeRight[leg[0] / 3][2] >= step_interval) {
+                //previousTimeRight[leg[0] / 3][1] = millis();
+            //}
+            //if (millis() - previousTimeRight[leg[0] / 3][2] >= step_interval) {
                 setServoAngle(pca2, leg[2], -L_angles[2] + 90 + O[2]);
-                previousTimeRight[leg[0] / 3][2] = millis();
-            }
+                //previousTimeRight[leg[0] / 3][2] = millis();
+            //}
         }
     }
 }
